@@ -14,7 +14,7 @@ export const Chartscontainer = ({
 }) => {
 	return (
 		<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 p-4">
-			<Card className="flex-1">
+			<Card className="flex-1 mt-4 md:mt-0">
 				<CardHeader>
 					<CardTitle>Bar Chart</CardTitle>
 				</CardHeader>
