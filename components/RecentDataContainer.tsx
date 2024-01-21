@@ -74,7 +74,6 @@ export default function RecentDataContainer({
 									onClick={() =>
 										handleDepositPageChange(Math.max(depositPage - 1, 1))
 									}
-									// disabled={depositPage === 1}
 								/>
 							</PaginationItem>
 							<PaginationItem>
@@ -93,7 +92,6 @@ export default function RecentDataContainer({
 											Math.min(depositPage + 1, depositTotalPages)
 										)
 									}
-									// disabled={depositPage === depositTotalPages}
 								/>
 							</PaginationItem>
 						</PaginationContent>
@@ -117,7 +115,6 @@ export default function RecentDataContainer({
 									onClick={() =>
 										handleWithdrawalPageChange(Math.max(withdrawalPage - 1, 1))
 									}
-									// disabled={withdrawalPage === 1}
 								/>
 							</PaginationItem>
 							<PaginationItem>
@@ -136,7 +133,6 @@ export default function RecentDataContainer({
 											Math.min(withdrawalPage + 1, withdrawalTotalPages)
 										)
 									}
-									// disabled={withdrawalPage === withdrawalTotalPages}
 								/>
 							</PaginationItem>
 						</PaginationContent>

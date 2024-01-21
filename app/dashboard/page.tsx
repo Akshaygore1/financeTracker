@@ -11,10 +11,15 @@ import {
 	getTrasactionalData
 } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { TransactionType } from "@/types";
+
+type FinanCialData = TransactionType[];
 
 export default function Dashboard() {
-	const financialData = useDataStore((state) => state.financialData);
-	if (financialData.length === 0) {
+	const financialData: FinanCialData[] = useDataStore(
+		(state) => state.financialData
+	);
+	if (!financialData[0] || financialData[0]?.length === 0) {
 		redirect("/");
 	}
 	const cardData = getCardsData(financialData[0]);
@@ -25,7 +30,6 @@ export default function Dashboard() {
 	);
 	return (
 		<main>
-			<Navbar />
 			<Analyticscards cardData={cardData} />
 			{/* <Chartscontainer barData={barData} pieData={pieData} /> */}
 			<RecentDataContainer

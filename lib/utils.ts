@@ -195,14 +195,22 @@ function findTransactionCategory(transaction: string): string {
 	const keywordsToCategory = {
 		grocery: ["grocery", "supermarket", "mart"],
 		utilities: ["electricity", "water", "gas"],
-		shopping: ["mall", "store", "shop"],
+		shopping: ["mall", "store", "shop", "wear", "flipkart", "amazon"],
 		dining: ["restaurant", "food", "cafe"],
 		transportation: ["transport", "fuel", "gas"],
 		entertainment: ["movie", "concert", "game"],
 		health: ["hospital", "pharmacy", "doctor"],
 		rent: ["rent", "lease", "landlord"],
 		salary: ["salary", "income", "paycheck"],
-		food: ["food", "grocery", "restaurant", "dining", "swiggy", "zomato"],
+		food: [
+			"food",
+			"grocery",
+			"restaurant",
+			"dining",
+			"swiggy",
+			"zomato",
+			"bakery"
+		],
 		other: ["miscellaneous", "general"]
 	};
 
