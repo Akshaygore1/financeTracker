@@ -35,17 +35,17 @@ export function getCardsData(financialData: TransactionType[]) {
 		{
 			title: "Current Balance",
 			amount: formatter.format(currentBalance),
-			percentageChange: "+20.1% from last month",
+			percentageChange: "--",
 		},
 		{
 			title: "Total Expense",
 			amount: formatter.format(totalExpense),
-			percentageChange: "-5.8% from last month",
+			percentageChange: "--",
 		},
 		{
 			title: "Total Income",
 			amount: formatter.format(totalIncome),
-			percentageChange: "+15.2% from last month",
+			percentageChange: "--",
 		},
 	];
 

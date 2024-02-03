@@ -42,7 +42,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 		));
 	};
 
-	const handlePageChange = (newPage: number) => {
+	const handlePageChange = (
+		newPage: number,
+		event: React.MouseEvent<HTMLAnchorElement>
+	) => {
+		event.preventDefault();
 		setPage(newPage);
 	};
 
@@ -60,19 +64,19 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 					<PaginationContent>
 						<PaginationItem>
 							<PaginationPrevious
-								href="#"
-								onClick={() => handlePageChange(Math.max(page - 1, 1))}
+								onClick={(event) =>
+									handlePageChange(Math.max(page - 1, 1), event)
+								}
 							/>
 						</PaginationItem>
 						<PaginationItem>
-							<PaginationLink href="#" onClick={() => handlePageChange(1)}>
-								{page}
-							</PaginationLink>
+							<PaginationLink>{page}</PaginationLink>
 						</PaginationItem>
 						<PaginationItem>
 							<PaginationNext
-								href="#"
-								onClick={() => handlePageChange(Math.min(page + 1, totalPages))}
+								onClick={(event) =>
+									handlePageChange(Math.min(page + 1, totalPages), event)
+								}
 							/>
 						</PaginationItem>
 					</PaginationContent>
