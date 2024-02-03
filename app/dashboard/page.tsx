@@ -8,7 +8,7 @@ import {
 	getBarGraphData,
 	getCardsData,
 	getPieData,
-	getTrasactionalData
+	getTrasactionalData,
 } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { TransactionType } from "@/types";
@@ -23,15 +23,15 @@ export default function Dashboard() {
 		redirect("/");
 	}
 	const cardData = getCardsData(financialData[0]);
-	const barData = getBarGraphData();
-	const pieData = getPieData();
+	const barData = getBarGraphData(financialData[0]);
+	const pieData = getPieData(financialData[0]);
 	const { depositArray, withdrawalArray } = getTrasactionalData(
 		financialData[0]
 	);
 	return (
 		<main>
 			<Analyticscards cardData={cardData} />
-			{/* <Chartscontainer barData={barData} pieData={pieData} /> */}
+			<Chartscontainer barData={barData} pieData={pieData} />
 			<RecentDataContainer
 				depositArray={depositArray}
 				withdrawalArray={withdrawalArray}

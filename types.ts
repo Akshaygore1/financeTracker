@@ -5,11 +5,13 @@ export interface analyticsCard {
 }
 export interface barGraphData {
 	name: string;
-	total: number;
+	revenue: number;
+	expense: number;
 }
 export interface pieChartData {
 	category: string;
-	amount: number;
+	expense: number;
+	revenue: number;
 }
 export interface ExcelRow {
 	Date: string;
@@ -40,4 +42,10 @@ export interface TransactionType {
 export interface TransactionalData {
 	depositArray: TransactionType[];
 	withdrawalArray: TransactionType[];
+}
+
+export interface graphData {
+	name: string;
+	expense: number;
+	revenue: number;
 }

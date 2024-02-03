@@ -3,7 +3,8 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import { Barincomechart } from "./ui/Barchart";
 import { barGraphData, pieChartData } from "@/types";
-import Financialpiechart from "./ui/Financialpiechart";
+import Financialpiechart from "./ui/FinancialAreaChart";
+import FinancialAreaChart from "./ui/FinancialAreaChart";
 
 export const Chartscontainer = ({
 	barData,
@@ -27,7 +28,7 @@ export const Chartscontainer = ({
 					<CardTitle>Pie Chart</CardTitle>
 				</CardHeader>
 				<CardContent className="pl-2">
-					<Financialpiechart pieData={pieData} />
+					<FinancialAreaChart pieData={pieData} />
 				</CardContent>
 			</Card>
 		</div>

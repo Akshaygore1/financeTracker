@@ -1,12 +1,19 @@
 import useDataStore from "@/hooks/dataStore";
-import { ExcelRow, Finance, TransactionType, TransactionalData } from "@/types";
+import {
+	ExcelRow,
+	Finance,
+	TransactionType,
+	TransactionalData,
+	barGraphData,
+	graphData,
+} from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as XLSX from "xlsx";
 
 export const formatter = new Intl.NumberFormat("en-IN", {
 	style: "currency",
-	currency: "INR"
+	currency: "INR",
 });
 
 export function cn(...inputs: ClassValue[]) {
@@ -28,117 +35,120 @@ export function getCardsData(financialData: TransactionType[]) {
 		{
 			title: "Current Balance",
 			amount: formatter.format(currentBalance),
-			percentageChange: "+20.1% from last month"
+			percentageChange: "+20.1% from last month",
 		},
 		{
 			title: "Total Expense",
 			amount: formatter.format(totalExpense),
-			percentageChange: "-5.8% from last month"
+			percentageChange: "-5.8% from last month",
 		},
 		{
 			title: "Total Income",
 			amount: formatter.format(totalIncome),
-			percentageChange: "+15.2% from last month"
-		}
+			percentageChange: "+15.2% from last month",
+		},
 	];
 
 	return dummyData;
 }
 
-export function getBarGraphData() {
-	const data = [
-		{
-			name: "Jan",
-			total: Math.floor(Math.random() * 5000) + 1000
-		},
-		{
-			name: "Feb",
-			total: Math.floor(Math.random() * 5000) + 1000
-		},
-		{
-			name: "Mar",
-			total: Math.floor(Math.random() * 5000) + 1000
-		},
-		{
-			name: "Apr",
-			total: Math.floor(Math.random() * 5000) + 1000
+export function getBarGraphData(financeData: TransactionType[]) {
+	let barData: barGraphData[] = [];
+	const obj: any = {};
+	const data: graphData[] = [];
+	for (const transaction of financeData) {
+		if (!obj[transaction.month]) {
+			obj[transaction.month] = {
+				expense: transaction.withdrawalAmount,
+				revenue: transaction.depositAmount,
+			};
+		} else {
+			obj[transaction.month].expense += transaction.withdrawalAmount;
+			obj[transaction.month].revenue += transaction.depositAmount;
+			obj[transaction.month].name = transaction.month;
 		}
-	];
+	}
+	for (const key in obj) {
+		data.push(obj[key]);
+	}
 	return data;
 }
 
-export function getPieData() {
-	const expensesData = [
-		{ category: "Rent", amount: 1200 },
-		{ category: "Utilities", amount: 200 },
-		{ category: "Groceries", amount: 300 },
-		{ category: "Entertainment", amount: 150 },
-		{ category: "Dining Out", amount: 100 },
-		{ category: "Transportation", amount: 50 }
-	];
-	return expensesData;
+export function getPieData(financeData: TransactionType[]) {
+	const data = financeData.map((transaction: TransactionType) => {
+		return {
+			category: transaction.category, // Change "name" to "category" or any other desired property
+			expense: transaction.withdrawalAmount ? transaction.withdrawalAmount : 0,
+			revenue: transaction.depositAmount ? transaction.depositAmount : 0,
+		};
+	});
+
+	console.log(data);
+	return data;
 }
 
 export const parseExcel = (file: File) => {
-	let processedFinancialData: TransactionType[] = [];
-	const reader = new FileReader();
+	if (file) {
+		let processedFinancialData: TransactionType[] = [];
+		const reader = new FileReader();
 
-	reader.onload = (e: ProgressEvent<FileReader>) => {
-		const data = e.target?.result as ArrayBuffer | null;
+		reader.onload = (e: ProgressEvent<FileReader>) => {
+			const data = e.target?.result as ArrayBuffer | null;
 
-		if (data) {
-			const workbook = XLSX.read(new Uint8Array(data), { type: "array" });
+			if (data) {
+				const workbook = XLSX.read(new Uint8Array(data), { type: "array" });
 
-			// Assuming the first sheet is the one you want to parse
-			const sheetName = workbook.SheetNames[0];
-			const sheet = workbook.Sheets[sheetName];
+				// Assuming the first sheet is the one you want to parse
+				const sheetName = workbook.SheetNames[0];
+				const sheet = workbook.Sheets[sheetName];
 
-			// Parse the sheet into a JSON object
-			const rawSheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-			const headerRowsToRemove = 20;
-			const sheetData: ExcelRow[][] = rawSheetData.slice(
-				headerRowsToRemove
-			) as ExcelRow[][];
-			const jsonData: Finance[] = XLSX.utils.sheet_to_json(
-				XLSX.utils.aoa_to_sheet(sheetData)
-			);
+				// Parse the sheet into a JSON object
+				const rawSheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+				const headerRowsToRemove = 20;
+				const sheetData: ExcelRow[][] = rawSheetData.slice(
+					headerRowsToRemove
+				) as ExcelRow[][];
+				const jsonData: Finance[] = XLSX.utils.sheet_to_json(
+					XLSX.utils.aoa_to_sheet(sheetData)
+				);
 
-			const dateRegex = /^\d{2}\/\d{2}\/\d{2}$/;
-			const filteredFinancialData = jsonData.filter((row) => {
-				if (row.Date) {
-					const dateValue = String(row.Date).trim();
-					return dateValue.match(dateRegex);
+				const dateRegex = /^\d{2}\/\d{2}\/\d{2}$/;
+				const filteredFinancialData = jsonData.filter((row) => {
+					if (row.Date) {
+						const dateValue = String(row.Date).trim();
+						return dateValue.match(dateRegex);
+					}
+					return false;
+				});
+				for (const i of filteredFinancialData) {
+					let transaction: Finance = i;
+					const { depositAmount, withdrawalAmount } =
+						processTransaction(transaction);
+					const name = extractName(transaction);
+					const upiId = extractUpiId(transaction);
+					const accountBalance = transaction["Closing Balance"];
+					const date = transaction["Date"];
+					const { monthName, currentYear } = extractDate(date);
+					const category = findTransactionCategory(name);
+
+					const transactionObject = {
+						accountBalance,
+						name,
+						upiId,
+						depositAmount,
+						withdrawalAmount,
+						date,
+						month: monthName,
+						year: currentYear,
+						category,
+					};
+					processedFinancialData.push(transactionObject);
 				}
-				return false;
-			});
-			for (const i of filteredFinancialData) {
-				let transaction: Finance = i;
-				const { depositAmount, withdrawalAmount } =
-					processTransaction(transaction);
-				const name = extractName(transaction);
-				const upiId = extractUpiId(transaction);
-				const accountBalance = transaction["Closing Balance"];
-				const date = transaction["Date"];
-				const { monthName, currentYear } = extractDate(date);
-				const category = findTransactionCategory(name);
-
-				const transactionObject = {
-					accountBalance,
-					name,
-					upiId,
-					depositAmount,
-					withdrawalAmount,
-					date,
-					month: monthName,
-					year: currentYear,
-					category
-				};
-				processedFinancialData.push(transactionObject);
 			}
-		}
-		useDataStore.getState().addTransaction(processedFinancialData);
-	};
-	reader.readAsArrayBuffer(file);
+			useDataStore.getState().addTransaction(processedFinancialData);
+		};
+		reader.readAsArrayBuffer(file);
+	}
 };
 
 function processTransaction(transaction: Finance) {
@@ -182,7 +192,7 @@ function extractDate(dataString: string) {
 		"September",
 		"October",
 		"November",
-		"December"
+		"December",
 	];
 
 	const adjustedMonthNumber = Math.max(1, Math.min(12, extractedMonth));
@@ -209,9 +219,9 @@ function findTransactionCategory(transaction: string): string {
 			"dining",
 			"swiggy",
 			"zomato",
-			"bakery"
+			"bakery",
 		],
-		other: ["miscellaneous", "general"]
+		other: ["miscellaneous", "general"],
 	};
 
 	const lowercasedNarration = transaction.toLowerCase();

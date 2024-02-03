@@ -1,7 +1,16 @@
 "use client";
 
 import { barGraphData } from "@/types";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	Legend,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis
+} from "recharts";
 
 export function Barincomechart({
 	barGraphData
@@ -10,22 +19,24 @@ export function Barincomechart({
 }) {
 	return (
 		<ResponsiveContainer width="100%" height={350}>
-			<BarChart data={barGraphData}>
-				<XAxis
-					dataKey="name"
-					stroke="#888888"
-					fontSize={12}
-					tickLine={false}
-					axisLine={false}
-				/>
-				<YAxis
-					stroke="#888888"
-					fontSize={12}
-					tickLine={false}
-					axisLine={false}
-					tickFormatter={(value: any) => `$${value}`}
-				/>
-				<Bar dataKey="total" fill="#fa8b1d" radius={[4, 4, 0, 0]} />
+			<BarChart
+				width={500}
+				height={300}
+				data={barGraphData}
+				margin={{
+					top: 20,
+					right: 30,
+					left: 20,
+					bottom: 5
+				}}
+			>
+				<CartesianGrid strokeDasharray="3 3" />
+				<XAxis dataKey="name" />
+				<YAxis />
+				<Tooltip />
+				<Legend />
+				<Bar dataKey="expense" stackId="a" fill="#8884d8" />
+				<Bar dataKey="revenue" stackId="a" fill="#82ca9d" />
 			</BarChart>
 		</ResponsiveContainer>
 	);
